@@ -2,7 +2,8 @@
 #define WIFI_PASSWORD "bbkivines"
 #define DEVICE_ID 1
 #define DEVICE_NAME "GoogleAiProg"
-#define TOKEN ""
+#define TOKEN "" 
+//upload the token from remoteme.org by creating new one
 
 
 #include <RemoteMe.h>

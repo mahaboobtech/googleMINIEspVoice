@@ -1,41 +1,39 @@
-#define WIFI_NAME "bs"
+#define WIFI_NAME "E"
 #define WIFI_PASSWORD "bbkivines"
 #define DEVICE_ID 1
 #define DEVICE_NAME "GoogleAiProg"
-#define TOKEN "" 
-//upload the token from remoteme.org by creating new one
+#define TOKEN "Token add karo "
 
 
 #include <RemoteMe.h>
 #include <RemoteMeSocketConnector.h>
 #include <ESP8266WiFi.h>
 
-#define Relay_1 D1
-#define Relay_2 D2
-#define Relay_3 D3
-
+#define Relay_1 5
+#define Relay_2 4
+#define Relay_3 0
 
 
 RemoteMe& remoteMe = RemoteMe::getInstance(TOKEN, DEVICE_ID);
 
 //*************** CODE FOR COMFORTABLE VARIABLE SET *********************
 
-inline void setRelay_1(boolean b) {remoteMe.getVariables()->setBoolean("relay_1", b); }
-inline void setRelay_2(boolean b) {remoteMe.getVariables()->setBoolean("relay_2", b); }
-inline void setRelay_3(boolean b) {remoteMe.getVariables()->setBoolean("relay_3", b); }
+inline void setRelayAc(boolean b) {remoteMe.getVariables()->setBoolean("relayAc", b); }
+inline void setRelayfan(boolean b) {remoteMe.getVariables()->setBoolean("relayfan", b); }
+inline void setRelaylight(boolean b) {remoteMe.getVariables()->setBoolean("relaylight", b); }
 
 //*************** IMPLEMENT FUNCTIONS BELOW *********************
 
-void onRelay_1Change(boolean b) {
-	Serial.printf("onRelay_1Change: b: %d\n",b);
-  digitalWrite(Relay_1, b ? HIGH : LOW);
+void onRelayAcChange(boolean b) {
+	Serial.printf("onRelayAcChange: b: %d\n",b);
+  digitalWrite(Relay_3, b ? HIGH : LOW);
 }
-void onRelay_2Change(boolean b) {
-	Serial.printf("onRelay_2Change: b: %d\n",b);
-  digitalWrite(Relay_1, b ? HIGH : LOW);
+void onRelayfanChange(boolean b) {
+	Serial.printf("onRelayfanChange: b: %d\n",b);
+  digitalWrite(Relay_2, b ? HIGH : LOW);
 }
-void onRelay_3Change(boolean b) {
-	Serial.printf("onRelay_3Change: b: %d\n",b);
+void onRelaylightChange(boolean b) {
+	Serial.printf("onRelaylightChange: b: %d\n",b);
   digitalWrite(Relay_1, b ? HIGH : LOW);
 }
 
@@ -43,6 +41,13 @@ void onRelay_3Change(boolean b) {
 
 
 void setup() {
+	Serial.begin(9600);
+
+	WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
+
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(100);
+	}
   pinMode(Relay_1, OUTPUT);
   pinMode(Relay_2, OUTPUT);
   pinMode(Relay_3, OUTPUT);
@@ -51,17 +56,9 @@ void setup() {
   digitalWrite(Relay_2, LOW);
   digitalWrite(Relay_3, LOW);
 
-	Serial.begin(115200);
-
-	WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
-
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(100);
-	}
-
-	remoteMe.getVariables()->observeBoolean("relay_1" ,onRelay_1Change);
-	remoteMe.getVariables()->observeBoolean("relay_2" ,onRelay_2Change);
-	remoteMe.getVariables()->observeBoolean("relay_3" ,onRelay_3Change);
+	remoteMe.getVariables()->observeBoolean("relayAc" ,onRelayAcChange);
+	remoteMe.getVariables()->observeBoolean("relayfan" ,onRelayfanChange);
+	remoteMe.getVariables()->observeBoolean("relaylight" ,onRelaylightChange);
 
 	remoteMe.setConnector(new RemoteMeSocketConnector());
 	remoteMe.sendRegisterDeviceMessage(DEVICE_NAME);
